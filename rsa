@@ -1,0 +1,96 @@
+#!/usr/bin/python3
+
+import sys
+import time
+from math import sqrt
+
+
+def is_prime(n):
+    """
+    Checks if a number is prime.
+
+    Args:
+        n (int): The number to check.
+
+    Returns:
+        bool: True if the number is prime, False otherwise.
+    """
+    if n < 2:
+        return False
+    for i in range(2, int(sqrt(n)) + 1):
+        if n % i == 0:
+            return False
+    return True
+
+
+def factor_rsa_number(n):
+    """
+    Factors a single RSA number using the trial division method.
+
+    Args:
+        n (int): The RSA number to factor.
+
+    Returns:
+        tuple: A tuple of two factors (p, q) if the number is factorable, None otherwise.
+    """
+    factors = []
+    while n % 2 == 0:
+        factors.append(2)
+        n //= 2
+    i = 3
+    while i <= sqrt(n):
+        if n % i == 0:
+            factors.append(i)
+            n //= i
+        else:
+            i += 2
+    if n > 2:
+        factors.append(n)
+    if len(factors) == 1:
+        p = factors[0]
+        q = n // p
+        return p, q
+    else:
+        pq = []
+        for factor in factors:
+            if is_prime(factor):
+                pq.append(factor)
+            else:
+                p, q = factor_rsa_number(factor)
+                pq.append(p)
+                pq.append(q)
+        return tuple(pq)
+
+
+def main():
+    """
+    Main function that reads the input file, factors RSA numbers, and prints the results.
+    """
+    if len(sys.argv) != 2:
+        print("Usage: rsa <file>")
+        exit()
+
+    input_file = sys.argv[1]
+
+    try:
+        with open(input_file, 'r') as file:
+            rsa_numbers = [int(line.strip()) for line in file.readlines()]
+    except FileNotFoundError:
+        print("File not found")
+        exit()
+
+    start_time = time.time()
+
+    for n in rsa_numbers:
+        p, q = factor_rsa_number(n)
+        print(f"{n}={q}*{p}")
+
+    end_time = time.time()
+    exec_time = end_time - start_time
+
+    print("Total execution time:", exec_time, "seconds")
+
+
+if __name__ == "__main__":
+    main()
+
