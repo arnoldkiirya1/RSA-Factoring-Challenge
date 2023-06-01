@@ -1,55 +1,33 @@
 #!/usr/bin/python3
-
-import sys
-import time
-
-
-def factorize(num):
-    """
-    Factorizes a number into two factors.
-
-    Args:
-        num (int): The number to factorize.
-
-    Returns:
-        tuple: A tuple of two factors if the number is not a prime, None otherwise.
-    """
-    for i in range(2, int(num ** 0.5) + 1):
-        if num % i == 0:
-            return i, num // i
-    return None
+"""Module that factorize as many numbers as possible
+ into a product of two smaller numbers."""
+from sys import argv
 
 
-def main():
-    """
-    Main function that reads the input file, performs factorization, and prints the results.
-    """
-    if len(sys.argv) != 2:
-        print("Usage: factors <file>")
-        exit()
+def factorize(value):
+    """"print a simple descomposition of an integer > 1"""
+    i = 2
 
-    input_file = sys.argv[1]
+    if value < 2:
+        return
+    print()
+    print(value, "<- value-bef")
+    while value % i:
+        i += 1
+    print("{:.0f}={:.0f}*{:.0f}".format(value, value / i, i))
+    print(value, "<- value-aft")
+    print()
 
-    try:
-        with open(input_file, 'r') as file:
-            lines = file.readlines()
-    except FileNotFoundError:
-        print("File not found")
-        exit()
+if len(argv) != 2:
+    exit()
 
-    start_time = time.time()
+try:
+    with open(argv[1]) as file:
+        line = file.readline()
 
-    for line in lines:
-        num = int(line.strip())
-        factors = factorize(num)
-        if factors:
-            print(f"{num}={factors[0]}*{factors[1]}")
-
-        if time.time() - start_time > 5:
-            print("Time limit exceeded")
-            exit()
-
-
-if __name__ == "__main__":
-    main()
-
+        while line != "":
+            value = int(line.split('\n')[0])
+            factorize(value)
+            line = file.readline()
+except:
+    pass
